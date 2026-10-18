@@ -30,6 +30,13 @@
 
   if (!campos.total || !campos.parados || !campos.valor || !campos.taxa) return;
 
+  // 18/10/2026: quem chega pelo anúncio da Meta (UTM do anúncio ou fbclid) leva essa marca na mensagem.
+  const qs = new URLSearchParams(location.search);
+  const veioDoAnuncio = ['meta', 'facebook', 'fb', 'instagram', 'ig'].includes((qs.get('utm_source') || '').toLowerCase())
+    || qs.has('fbclid');
+  const abertura = ['Olá, Raphael. Fiz o Raio-X do Pátio no seu site.', ...(veioDoAnuncio ? ['Vim pelo anúncio.'] : [])];
+  const linkWhats = (/** @type {string[]} */ linhas) => `https://wa.me/${WHATS}?text=${encodeURIComponent(linhas.join('\n'))}`;
+
   /**
    * @param {number} parados
    * @param {number} valor
@@ -57,7 +64,12 @@
   function render() {
     const d = ler();
     if (!saida.erro) return;
-    if ('erro' in d && d.erro) { saida.erro.textContent = d.erro; return; }
+    if ('erro' in d && d.erro) {
+      saida.erro.textContent = d.erro;
+      // número inválido: o botão não pode seguir com a conta antiga; vai uma mensagem sem números
+      if (saida.whats) saida.whats.href = linkWhats([...abertura, '', 'Quero entender quanto dinheiro está parado no meu pátio.']);
+      return;
+    }
     saida.erro.textContent = '';
 
     const total = /** @type {number} */ (d.total);
@@ -87,8 +99,8 @@
     }
 
     if (saida.whats) {
-      const msg = [
-        'Olá, Raphael. Fiz o Raio-X do Pátio no seu site.',
+      saida.whats.href = linkWhats([
+        ...abertura,
         '',
         `Carros no pátio: ${total}`,
         `Parados há mais de 90 dias: ${parados}`,
@@ -100,8 +112,7 @@
         `Nos 90 dias: ${brl(r.noventaDias)}`,
         '',
         'Quero entender o que dá pra fazer com isso.',
-      ].join('\n');
-      saida.whats.href = `https://wa.me/${WHATS}?text=${encodeURIComponent(msg)}`;
+      ]);
     }
   }
 

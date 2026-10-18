@@ -53,6 +53,9 @@
     .rx-how code{font-size:12.5px;background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:2px 6px}
     .rx-erro{margin-top:18px;font-size:13.5px;color:#8a2a1f;min-height:1.2em}
     .rx-back{margin-top:16px}
+    .rx-ver{display:none;margin-top:22px;width:100%;justify-content:center}
+    @media (max-width:900px){.rx-ver{display:flex}}
+    #rx-resultado{scroll-margin-top:16px}
   </style>
   <!-- Meta Pixel (BergerOS site 1421599243496045) — 17/10/2026 -->
   <script>
@@ -120,13 +123,15 @@
 
           <p class="rx-erro" id="rx-erro" role="status" aria-live="polite"></p>
 
+          <a class="button rx-ver" id="rx-ver" href="#rx-resultado">Ver a minha conta <span aria-hidden="true">↓</span></a>
+
           <div class="rx-reset">
             <button class="text-link" type="button" id="rx-reset">Restaurar exemplo <span aria-hidden="true">↻</span></button>
             <span class="rx-help">Os campos vêm com valores de exemplo. Troque pelos seus.</span>
           </div>
         </form>
 
-        <div class="rx-card rx-out" aria-live="polite">
+        <div class="rx-card rx-out" id="rx-resultado" aria-live="polite">
           <h2>O que a conta mostra</h2>
 
           <noscript><p class="rx-sub">Ative o JavaScript para ver a conta. A fórmula é:
