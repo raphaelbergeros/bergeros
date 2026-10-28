@@ -35,8 +35,13 @@
   <script>
   (function () {
     // pixel e redirecionamento só no site de verdade; prévia local, cópia ou ?teste=1 = modo teste (18/10)
-    var teste = new URLSearchParams(location.search).has('teste') || !/(^|\.)bergeros\.com\.br$/.test(location.hostname);
+    var qs = new URLSearchParams(location.search);
+    var teste = qs.has('teste') || !/(^|\.)bergeros\.com\.br$/.test(location.hostname);
     window.__teste = teste;
+    // 27/10: anúncio = só quem traz utm_source da Meta (o link do anúncio leva utm_source=meta). O fbclid saiu da
+    // regra: o Facebook põe fbclid em clique de post orgânico também, e o post virava "anúncio" no CRM.
+    window.__anuncio = ['meta', 'facebook', 'fb', 'instagram', 'ig'].indexOf((qs.get('utm_source') || '').toLowerCase()) >= 0;
+    window.__video = (qs.get('v') || '').toLowerCase();   // ?v=giro · ?v=agente (link na legenda de cada reel)
     if (teste) return;
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
@@ -45,7 +50,9 @@
     'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '1421599243496045');
     fbq('track', 'PageView');
-    fbq('track', 'Lead', {content_name: 'whatsapp-anuncio'});
+    // Lead só pro anúncio (é o evento que a campanha otimiza); clique de post vira evento próprio
+    if (window.__anuncio) fbq('track', 'Lead', {content_name: 'whatsapp-anuncio'});
+    else fbq('trackCustom', 'WhatsAppPost', {content_name: 'whatsapp-post-' + (window.__video || 'sem-video')});
   })();
   </script>
 </head>
@@ -59,11 +66,12 @@
   </main>
   <script>
   (function () {
-    var qs = new URLSearchParams(location.search);
-    var veioDoAnuncio = ['meta', 'facebook', 'fb', 'instagram', 'ig'].indexOf((qs.get('utm_source') || '').toLowerCase()) >= 0
-      || qs.has('fbclid');
-    var linhas = ['Olá, Raphael. Vi o vídeo dos 5 motores da BergerOS.'];
-    if (veioDoAnuncio || window.__teste) linhas.push('Vim pelo anúncio.');
+    var VIDEOS = {
+      giro: 'Vi o vídeo do Giro de Pátio da BergerOS.',
+      agente: 'Vi o vídeo do agente de IA da BergerOS.'
+    };
+    var linhas = ['Olá, Raphael. ' + (VIDEOS[window.__video] || 'Vi o vídeo dos 5 motores da BergerOS.')];
+    if (window.__anuncio) linhas.push('Vim pelo anúncio.');
     var link = 'https://wa.me/5547999122932?text=' + encodeURIComponent(linhas.join('\n'));
     document.getElementById('zap').href = link;
     if (window.__teste) return;            // teste: mostra a página, não redireciona
