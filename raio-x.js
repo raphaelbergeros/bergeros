@@ -30,10 +30,11 @@
 
   if (!campos.total || !campos.parados || !campos.valor || !campos.taxa) return;
 
-  // 18/10/2026: quem chega pelo anúncio da Meta (UTM do anúncio ou fbclid) leva essa marca na mensagem.
+  // 18/10/2026: quem chega pelo anúncio da Meta leva essa marca na mensagem.
+  // 28/10/2026: anúncio = só utm_medium=paid (todo link de anúncio leva). Saíram utm_source e fbclid: a bio do
+  // Instagram usa utm_source=ig&utm_medium=social e o Facebook põe fbclid em post orgânico, e os dois viravam "anúncio".
   const qs = new URLSearchParams(location.search);
-  const veioDoAnuncio = ['meta', 'facebook', 'fb', 'instagram', 'ig'].includes((qs.get('utm_source') || '').toLowerCase())
-    || qs.has('fbclid');
+  const veioDoAnuncio = ['paid', 'cpc'].includes((qs.get('utm_medium') || '').toLowerCase());
   const abertura = ['Olá, Raphael. Fiz o Raio-X do Pátio no seu site.', ...(veioDoAnuncio ? ['Vim pelo anúncio.'] : [])];
   const linkWhats = (/** @type {string[]} */ linhas) => `https://wa.me/${WHATS}?text=${encodeURIComponent(linhas.join('\n'))}`;
 

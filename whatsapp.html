@@ -38,9 +38,9 @@
     var qs = new URLSearchParams(location.search);
     var teste = qs.has('teste') || !/(^|\.)bergeros\.com\.br$/.test(location.hostname);
     window.__teste = teste;
-    // 27/10: anúncio = só quem traz utm_source da Meta (o link do anúncio leva utm_source=meta). O fbclid saiu da
-    // regra: o Facebook põe fbclid em clique de post orgânico também, e o post virava "anúncio" no CRM.
-    window.__anuncio = ['meta', 'facebook', 'fb', 'instagram', 'ig'].indexOf((qs.get('utm_source') || '').toLowerCase()) >= 0;
+    // 27/10: o fbclid saiu da regra (o Facebook põe fbclid em clique de post orgânico também).
+    // 28/10: anúncio = só utm_medium=paid (todo link de anúncio leva); utm_source=ig da bio é orgânico (utm_medium=social).
+    window.__anuncio = ['paid', 'cpc'].indexOf((qs.get('utm_medium') || '').toLowerCase()) >= 0;
     window.__video = (qs.get('v') || '').toLowerCase();   // ?v=giro · ?v=agente (link na legenda de cada reel)
     if (teste) return;
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
