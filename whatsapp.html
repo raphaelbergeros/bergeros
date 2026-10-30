@@ -49,10 +49,24 @@
     t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '1421599243496045');
-    fbq('track', 'PageView');
+    // API de Conversões (29/10/2026): cada evento sai pelo pixel E pelo servidor (Worker) com o mesmo event_id
+    window.bxTrack = function (tipo, nome, dados) {
+      var CAPI = 'https://capi-bergeros.raphael-481.workers.dev/';  // Worker capi-bergeros (Cloudflare BergerOS)
+      var id = nome + '.' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      try { fbq(tipo, nome, dados || {}, {eventID: id}); } catch (_) {}
+      if (CAPI.indexOf('https://') !== 0) return;
+      try {
+        var ck = function (n) { var m = document.cookie.match('(?:^|; )' + n + '=([^;]*)'); return m ? m[1] : ''; };
+        var fbclid = new URLSearchParams(location.search).get('fbclid');
+        fetch(CAPI, {method: 'POST', keepalive: true, body: JSON.stringify({event_name: nome, event_id: id,
+          custom_data: dados || {}, url: location.href, fbp: ck('_fbp'),
+          fbc: ck('_fbc') || (fbclid ? 'fb.1.' + Date.now() + '.' + fbclid : '')})});
+      } catch (_) {}
+    };
+    bxTrack('track', 'PageView');
     // Lead só pro anúncio (é o evento que a campanha otimiza); clique de post vira evento próprio
-    if (window.__anuncio) fbq('track', 'Lead', {content_name: 'whatsapp-anuncio'});
-    else fbq('trackCustom', 'WhatsAppPost', {content_name: 'whatsapp-post-' + (window.__video || 'sem-video')});
+    if (window.__anuncio) bxTrack('track', 'Lead', {content_name: 'whatsapp-anuncio'});
+    else bxTrack('trackCustom', 'WhatsAppPost', {content_name: 'whatsapp-post-' + (window.__video || 'sem-video')});
   })();
   </script>
 </head>

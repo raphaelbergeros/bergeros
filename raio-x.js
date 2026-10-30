@@ -132,7 +132,8 @@
   });
 
   // Meta Pixel (17/10/2026): nenhum número da loja vai pra Meta, só o nome do passo.
-  const px = (/** @type {any[]} */ ...a) => { try { /** @type {any} */ (window).fbq?.(...a); } catch (_) { /* bloqueado */ } };
+  // 29/10: passa pelo bxTrack (pixel + API de Conversões com o mesmo event_id)
+  const px = (/** @type {any[]} */ ...a) => { try { const w = /** @type {any} */ (window); (w.bxTrack || w.fbq)?.(...a); } catch (_) { /* bloqueado */ } };
   px('track', 'ViewContent', {content_name: 'raio-x-patio'});
   let calculado = false;
   Object.values(campos).forEach(c => c?.addEventListener('change', () => {
