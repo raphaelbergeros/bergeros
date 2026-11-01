@@ -94,6 +94,6 @@
 }
 @media(max-width:1100px){.channel-paths{display:none}}
 @media(max-width:760px){.flow-controls{justify-content:flex-start;margin:22px 0 0}.flow-controls+.channel-map{margin-top:22px}}
-.social-links{display:inline-flex;align-items:center;gap:6px}.social-links a{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;color:var(--ink);text-decoration:none;transition:color .15s,background .15s}.social-links a:hover{color:var(--green);background:#14695c14}.social-links svg{display:block}
-.site-footer .social-links{display:flex;justify-content:flex-end;margin:0 -10px 8px 0}
-@media(max-width:760px){.site-header nav .social-links{padding:8px 0 0;margin-left:-10px}.site-footer .social-links{justify-content:flex-start;margin:0 0 8px -10px}}
+.social-links{display:inline-flex;align-items:center;gap:10px}.social-links a{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;color:#fff;text-decoration:none;box-shadow:0 3px 10px #16262222;transition:transform .15s,box-shadow .15s}.social-links a:hover{transform:translateY(-2px);box-shadow:0 6px 16px #16262233}.social-links svg{display:block}.social-ig{background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285aeb 90%)}.social-fb{background:#1877f2}.social-wa{background:#25d366}
+.site-footer .social-links{display:flex;justify-content:flex-end;margin:0 0 12px}
+@media(max-width:760px){.site-header nav .social-links{padding:14px 0 4px}.site-footer .social-links{justify-content:flex-start}}
