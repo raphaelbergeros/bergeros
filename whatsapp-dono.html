@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 10/11/2026: página-ponte COM PERGUNTA DO CARGO (modelado do funil do @joaovictorads_, checagem 10/11).
+       Só "dono ou sócio" vindo de anúncio conta como Lead no pixel: assim a Meta aprende a buscar dono de revendedora.
+       Os outros cargos também abrem o WhatsApp, mas viram evento próprio (não ensinam o anúncio). Fora do Google.
+       PRÉVIA: não publicada. Publicar no site só com OK do Raphael. -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#162622">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <title>WhatsApp | BergerOS</title>
+  <style>
+    @font-face { font-family: Inter; src: url(assets/fonts/Inter-Regular.ttf) format("truetype"); font-weight: 400; font-display: swap; }
+    @font-face { font-family: Inter; src: url(assets/fonts/Inter-SemiBold.ttf) format("truetype"); font-weight: 600; font-display: swap; }
+    :root { --fundo: #162622; --texto: #f3f1ea; --suave: #b9c7bf; --verde: #9cf27a; --zap: #25d366; --linha: #2e4a42; }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; }
+    body { background: var(--fundo); color: var(--texto); font: 400 17px/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+           display: grid; place-items: center; padding: 24px max(16px, env(safe-area-inset-left)); text-align: center; min-height: 100vh; }
+    main { width: 100%; max-width: 380px; display: grid; gap: 18px; justify-items: center; }
+    img { width: 64px; height: 64px; border-radius: 14px; }
+    h1 { font-size: 22px; font-weight: 600; margin: 0; line-height: 1.3; }
+    p { margin: 0; color: var(--suave); }
+    .opcoes { width: 100%; display: grid; gap: 10px; }
+    button.opcao { width: 100%; padding: 15px 18px; border-radius: 12px; border: 1px solid var(--linha); background: #1d332d;
+                   color: var(--texto); font: 600 17px/1.3 Inter, system-ui, sans-serif; cursor: pointer; text-align: left; }
+    button.opcao:hover { border-color: var(--verde); }
+    button.opcao:focus-visible { outline: 3px solid var(--verde); outline-offset: 3px; }
+    .abrindo { display: none; gap: 18px; justify-items: center; width: 100%; }
+    .abrindo.on { display: grid; }
+    .ponto { display: inline-block; width: 8px; height: 8px; margin: 0 3px; border-radius: 50%; background: var(--verde);
+             animation: pulsa 1s infinite ease-in-out; }
+    .ponto:nth-child(2) { animation-delay: .15s; } .ponto:nth-child(3) { animation-delay: .3s; }
+    @keyframes pulsa { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { .ponto { animation: none; opacity: .8; } }
+    a.botao { display: block; width: 100%; padding: 16px 20px; border-radius: 12px; background: var(--zap); color: #0b1f12;
+              font-weight: 600; text-decoration: none; font-size: 18px; }
+    a.botao:focus-visible { outline: 3px solid var(--verde); outline-offset: 3px; }
+    small { color: var(--suave); font-size: 14px; }
+  </style>
+  <!-- Meta Pixel (BergerOS site 1421599243496045) — fora do bergeros.com.br ou com ?teste=1 não carrega nem dispara -->
+  <script>
+  (function () {
+    var qs = new URLSearchParams(location.search);
+    var teste = qs.has('teste') || !/(^|\.)bergeros\.com\.br$/.test(location.hostname);
+    window.__teste = teste;
+    window.__anuncio = ['paid', 'cpc'].indexOf((qs.get('utm_medium') || '').toLowerCase()) >= 0;
+    window.__video = (qs.get('v') || '').toLowerCase();
+    window.bxTrack = function () {};          // no teste, nada sai
+    if (teste) return;
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1421599243496045');
+    // API de Conversões: cada evento sai pelo pixel E pelo servidor (Worker) com o mesmo event_id (igual ao whatsapp.html)
+    window.bxTrack = function (tipo, nome, dados) {
+      var CAPI = 'https://capi-bergeros.raphael-481.workers.dev/';
+      var id = nome + '.' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      try { fbq(tipo, nome, dados || {}, {eventID: id}); } catch (_) {}
+      try {
+        var ck = function (n) { var m = document.cookie.match('(?:^|; )' + n + '=([^;]*)'); return m ? m[1] : ''; };
+        var fbclid = new URLSearchParams(location.search).get('fbclid');
+        fetch(CAPI, {method: 'POST', keepalive: true, body: JSON.stringify({event_name: nome, event_id: id,
+          custom_data: dados || {}, url: location.href, fbp: ck('_fbp'),
+          fbc: ck('_fbc') || (fbclid ? 'fb.1.' + Date.now() + '.' + fbclid : '')})});
+      } catch (_) {}
+    };
+    bxTrack('track', 'PageView');
+    // O Lead NÃO sai aqui: sai só depois do clique "Sou o dono ou sócio" (ver abaixo)
+  })();
+  </script>
+</head>
+<body>
+  <main>
+    <img src="icon-512.png" alt="" width="64" height="64">
+
+    <section class="pergunta" id="pergunta" style="display:grid;gap:18px;width:100%">
+      <h1>Antes de abrir o WhatsApp: quem é você na revendedora?</h1>
+      <p>Um toque só. Assim eu já sei com quem estou falando.</p>
+      <div class="opcoes">
+        <button class="opcao" type="button" data-cargo="dono">Sou o dono ou sócio</button>
+        <button class="opcao" type="button" data-cargo="gerente">Sou gerente</button>
+        <button class="opcao" type="button" data-cargo="vendedor">Sou vendedor</button>
+        <button class="opcao" type="button" data-cargo="outro">Outro</button>
+      </div>
+    </section>
+
+    <section class="abrindo" id="abrindo" aria-live="polite">
+      <h1>Abrindo o WhatsApp da BergerOS</h1>
+      <p><span class="ponto"></span><span class="ponto"></span><span class="ponto"></span></p>
+      <a class="botao" id="zap" href="https://wa.me/5547999122932">Abrir o WhatsApp</a>
+      <small>Se não abrir sozinho, toque no botão verde.</small>
+    </section>
+  </main>
+  <script>
+  (function () {
+    var FRASE = {
+      dono: 'Sou dono de revendedora.',
+      gerente: 'Sou gerente de revendedora.',
+      vendedor: 'Sou vendedor de revendedora.',
+      outro: ''
+    };
+    var VIDEOS = {
+      giro: 'Vi o vídeo do Giro de Pátio da BergerOS.',
+      agente: 'Vi o vídeo do agente de IA da BergerOS.'
+    };
+    function abrir(cargo) {
+      // Só dono/sócio vindo de anúncio ensina a Meta (Lead). O resto vira evento próprio, que não otimiza nada.
+      if (cargo === 'dono' && window.__anuncio) bxTrack('track', 'Lead', {content_name: 'whatsapp-dono'});
+      else bxTrack('trackCustom', 'WhatsAppCargo', {content_name: 'cargo-' + cargo + (window.__anuncio ? '-anuncio' : '-organico')});
+
+      var linhas = ['Olá, Raphael. ' + (VIDEOS[window.__video] || 'Vim falar sobre a BergerOS.')];
+      if (FRASE[cargo]) linhas.push(FRASE[cargo]);
+      if (window.__anuncio) linhas.push('Vim pelo anúncio.');
+      var link = 'https://wa.me/5547999122932?text=' + encodeURIComponent(linhas.join('\n'));
+
+      document.getElementById('zap').href = link;
+      document.getElementById('pergunta').style.display = 'none';
+      document.getElementById('abrindo').classList.add('on');
+      if (window.__teste) return;              // teste: mostra a tela, não redireciona
+      setTimeout(function () { location.href = link; }, 900);  // dá tempo do pixel mandar o evento
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('button.opcao'), function (b) {
+      b.addEventListener('click', function () { abrir(b.getAttribute('data-cargo')); });
+    });
+  })();
+  </script>
+</body>
+</html>
